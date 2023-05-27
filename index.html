@@ -19,41 +19,39 @@
 </head>
 
 <body>
-
-    <canvas id="myCanvas" width="480" height="320"></canvas>
-
+    <canvas id="main" width="480" height="320"></canvas>
     <script>
-        const canvas = document.getElementById("myCanvas");
+        const canvas = document.getElementById("main");
         const context = canvas.getContext("2d");
         const color = "#FA5A5F";
         let ballRadius = 10;
         let x = canvas.width / 2;
         let y = canvas.height - 30;
-        let dx = 2;
-        let dy = -2;
+        let xDiff = 2;
+        let yDiff = -2;
+        const blockRowCount = 5;
+        const blockColumnCount = 3;
+        const blockWidth = 75;
+        const blockHeight = 20;
+        const blockPadding = 10;
+        const blockOffsetTop = 30;
+        const blockOffsetLeft = 30;
         const paddleHeight = 10;
         const paddleWidth = 75;
-        let paddleX = (canvas.width - paddleWidth) / 2;
-        let rightPressed = false;
-        let leftPressed = false;
-        const brickRowCount = 5;
-        const brickColumnCount = 3;
-        const brickWidth = 75;
-        const brickHeight = 20;
-        const brickPadding = 10;
-        const brickOffsetTop = 30;
-        const brickOffsetLeft = 30;
+        let xPad = (canvas.width - paddleWidth) / 2;
         let score = 0;
         let lives = 3;
         let level = 1;
         let interval;
         let levelUpCounter = 3;
+        let rightPressed = false;
+        let leftPressed = false;
 
-        const bricks = [];
-        for (let i = 0; i < brickColumnCount; i++) {
-            bricks[i] = [];
-            for (let j = 0; j < brickRowCount; j++) {
-                bricks[i][j] = { x: 0, y: 0, status: 1 };
+        const blocks = [];
+        for (let i = 0; i < blockColumnCount; i++) {
+            blocks[i] = [];
+            for (let j = 0; j < blockRowCount; j++) {
+                blocks[i][j] = { x: 0, y: 0, status: 1 };
             }
         }
 
@@ -83,33 +81,38 @@
         }
 
         function onMouseMove(e) {
-            const relativeX = e.clientX - canvas.offsetLeft;
-            if (relativeX > 0 && relativeX < canvas.width) {
-                paddleX = relativeX - paddleWidth / 2;
+            const xAxis = e.clientX - canvas.offsetLeft;
+            if (xAxis > 0 && xAxis < canvas.width) {
+                xPad = xAxis - paddleWidth / 2;
             }
         }
 
-        function collisionDetection() {
-            for (let c = 0; c < brickColumnCount; c++) {
-                for (let r = 0; r < brickRowCount; r++) {
-                    const b = bricks[c][r];
-                    if (b.status === 1) {
-                        if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
-                            dy = -dy;
-                            b.status = 0;
-                            score++;
-                            if (score === brickRowCount * brickColumnCount) {
-                                if (level < 3) {
-                                    level++;
-                                    levelUpCounter = 3;
-                                    resetGame();
-                                } else {
-                                    clearInterval(interval);
-                                    displayWinMessage();
-                                }
-                            }
-                        }
-                    }
+        function detectCollision() {
+            for (let i = 0; i < blockColumnCount; i++) {
+                for (let j = 0; j < blockRowCount; j++) {
+                    const b = blocks[i][j];
+                    if (b.status !== 1) continue;
+
+                    const hitFromLeft = x > b.x && x < b.x + blockWidth;
+                    const hitFromTop = y > b.y && y < b.y + blockHeight;
+                    if (!hitFromLeft || !hitFromTop) continue;
+
+                    yDiff = -yDiff;
+                    b.status = 0;
+                    score++;
+
+                    if (score !== blockRowCount * blockColumnCount) return;
+
+                    level < 3
+                        ? (
+                            level++,
+                            levelUpCounter = 3,
+                            resetGame()
+                        )
+                        : (
+                            clearInterval(interval),
+                            displayWinMessage()
+                        )
                 }
             }
         }
@@ -132,7 +135,7 @@
             context.fillText("Press 'R' to restart", canvas.width / 2, canvas.height / 2 + 30);
         }
 
-        function drawBall() {
+        function renderBall() {
             context.beginPath();
             context.arc(x, y, ballRadius, 0, Math.PI * 2);
             context.fillStyle = color;
@@ -140,48 +143,47 @@
             context.closePath();
         }
 
-        function drawPaddle() {
+        function renderPaddle() {
             context.beginPath();
-            context.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+            context.rect(xPad, canvas.height - paddleHeight, paddleWidth, paddleHeight);
             context.fillStyle = color;
             context.fill();
             context.closePath();
         }
 
-        function drawBricks() {
-            for (let i = 0; i < brickColumnCount; i++) {
-                for (let j = 0; j < brickRowCount; j++) {
-                    if (bricks[i][j].status === 1) {
-                        const brickX = (j * (brickWidth + brickPadding)) + brickOffsetLeft;
-                        const brickY = (i * (brickHeight + brickPadding)) + brickOffsetTop;
-                        bricks[i][j].x = brickX;
-                        bricks[i][j].y = brickY;
-                        context.beginPath();
-                        context.rect(brickX, brickY, brickWidth, brickHeight);
-                        context.fillStyle = color;
-                        context.fill();
-                        context.closePath();
-                    }
+        function renderBlocks() {
+            for (let i = 0; i < blockColumnCount; i++) {
+                for (let j = 0; j < blockRowCount; j++) {
+                    if (blocks[i][j].status !== 1) continue;
+
+                    const blockX = (j * (blockWidth + blockPadding)) + blockOffsetLeft;
+                    const blockY = (i * (blockHeight + blockPadding)) + blockOffsetTop;
+                    blocks[i][j].x = blockX;
+                    blocks[i][j].y = blockY;
+                    context.beginPath();
+                    context.rect(blockX, blockY, blockWidth, blockHeight);
+                    context.fillStyle = color;
+                    context.fill();
+                    context.closePath();
                 }
             }
         }
 
-        function drawScore() {
+        function renderScore() {
             context.font = "16px Arial";
             context.fillStyle = color;
             context.fillText("Score: " + score, 40, 20);
         }
 
-        function drawLives() {
+        function renderLivesAndLevel() {
             context.font = "16px Arial";
             context.fillStyle = color;
             context.fillText("Lives: " + lives + " | Level: " + level, canvas.width - 80, 20);
         }
 
-        function drawLevelUpText() {
+        function renderLevelUpText() {
             if (levelUpCounter > 0) {
                 context.font = "30px Arial";
-                context.fillStyle = `rgba(0, 149, 221, 1)`;
                 context.textAlign = "center";
                 context.fillText("🔥 LEVEL UP 🔥", canvas.width / 2, canvas.height / 2);
             }
@@ -191,25 +193,25 @@
             }
         }
 
-        function draw() {
+        function render() {
             context.clearRect(0, 0, canvas.width, canvas.height);
-            drawBricks();
-            drawBall();
-            drawPaddle();
-            drawScore();
-            drawLives();
-            collisionDetection();
-            drawLevelUpText();
+            renderBlocks();
+            renderBall();
+            renderPaddle();
+            renderScore();
+            renderLivesAndLevel();
+            detectCollision();
+            renderLevelUpText();
 
-            if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-                dx = -dx;
+            if (x + xDiff > canvas.width - ballRadius || x + xDiff < ballRadius) {
+                xDiff = -xDiff;
             }
-            if (y + dy < ballRadius) {
-                dy = -dy;
+            if (y + yDiff < ballRadius) {
+                yDiff = -yDiff;
             }
-            else if (y + dy > canvas.height - ballRadius) {
-                if (x > paddleX && x < paddleX + paddleWidth) {
-                    dy = -dy;
+            else if (y + yDiff > canvas.height - ballRadius) {
+                if (x > xPad && x < xPad + paddleWidth) {
+                    yDiff = -yDiff;
                 }
                 else {
                     lives--;
@@ -223,38 +225,38 @@
                 }
             }
 
-            if (rightPressed && paddleX < canvas.width - paddleWidth) {
-                paddleX += 7;
+            if (rightPressed && xPad < canvas.width - paddleWidth) {
+                xPad += 7;
             }
-            else if (leftPressed && paddleX > 0) {
-                paddleX -= 7;
+            else if (leftPressed && xPad > 0) {
+                xPad -= 7;
             }
 
-            x += dx;
-            y += dy;
+            x += xDiff;
+            y += yDiff;
         }
 
         function resetGame() {
             score = 0;
             lives = 3;
             resetBallAndPaddle();
-            resetBricks();
+            resetBlocks();
             clearInterval(interval);
-            interval = setInterval(draw, 5 * (4 - level));
+            interval = setInterval(render, 5 * (4 - level));
         }
 
         function resetBallAndPaddle() {
             x = canvas.width / 2;
             y = canvas.height - 30;
-            dx = 2;
-            dy = -2;
-            paddleX = (canvas.width - paddleWidth) / 2;
+            xDiff = 2;
+            yDiff = -2;
+            xPad = (canvas.width - paddleWidth) / 2;
         }
 
-        function resetBricks() {
-            for (let c = 0; c < brickColumnCount; c++) {
-                for (let r = 0; r < brickRowCount; r++) {
-                    bricks[c][r].status = 1;
+        function resetBlocks() {
+            for (let c = 0; c < blockColumnCount; c++) {
+                for (let r = 0; r < blockRowCount; r++) {
+                    blocks[c][r].status = 1;
                 }
             }
         }

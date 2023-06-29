@@ -1,49 +1,42 @@
-# 2D Graphic Demo
+# Snake Game
 
-The Breakout Game is a two-dimensional game made with HTML, CSS, and JavaScript. The game is based on the old video game Breakout, in which the player moves a paddle to make a ball bounce and break bricks. The goal is to get rid of all of the bricks on the screen by pushing the ball away from the bottom of the screen with the paddle.
+The Snake Game is a classic two-dimensional game built using HTML, CSS, and JavaScript. In this game, the player controls a growing snake, maneuvering it around the screen to eat food and avoid collisions with the walls or its own body. The objective is to eat as much food as possible and achieve a high score.
 
-## How the project works:
-The following things are part of the game:
+## How the Game Works:
+Here's an overview of the Snake Game:
 
-In the game Ball and Paddle, the ball bounces off the walls, bricks, and the paddle. The player moves the paddle so that the ball doesn't fall off the bottom of the screen.
+- The game features a grid-based game board represented by the HTML Canvas element.
+- The snake starts with a few initial segments and grows longer as it eats food.
+- The player controls the snake's movement using the arrow keys on the keyboard.
+- The snake moves in the direction indicated by the arrow key and cannot reverse its direction to avoid colliding with its own body.
+- The game ends if the snake collides with the walls or its own body.
+- Food appears at random positions on the game board, and when the snake eats it, it grows longer, and the player earns points.
+- The player's score is displayed during the game.
+- The game speed increases gradually as the snake grows, creating a more challenging experience.
 
-### Bricks: 
-The bricks on the game screen are set up in groups and rows. To finish the level, the player has to break all of the bricks.
+## Key Learning Points:
+During the development of this game, you can learn the following key points:
 
-### Levels: 
-The game has three levels that get harder as you go up. Each level has a different layout of bricks and the ball moves faster.
+- Utilizing HTML5 Canvas: The game utilizes the HTML5 canvas element to draw the game board, snake, and food, as well as handle rendering and animations.
 
-### Scoring and Lives:
-When a person breaks a brick, they get a point. The game keeps score and keeps track of how many lives the player has left. The player starts with three lives, and if they lose all of them, the game is over.
+- JavaScript Game Development: JavaScript is used to handle game mechanics, such as moving the snake, detecting collisions, updating the score, and managing game over conditions.
 
-### How to win and lose:
-The player wins the game when all of the bricks on the screen are gone. If the ball hits the bottom of the screen and there are still lives left, the player can keep playing. But if the person runs out of lives, the game is over.
+- Event Handling: The game captures keyboard events to control the snake's movement and handle game restarts.
 
-### Key Learning Points:
-During the making of this project, there were several key learning points:
+- Animation and Frame Rendering: The game employs the `requestAnimationFrame` method to achieve smooth animation and frame rendering.
 
-### HTML5 Canvas:
-The HTML5 canvas element is used to make the game's images and handle the rendering of the game.
+## How to Play:
+To enjoy the Snake Game, follow these steps:
 
-### JavaScript Game Development:
-The idea was to use JavaScript to make game mechanics. This meant taking care of how the ball moved, how to tell when it hit something, what the user did, and how the game logic worked.
+- Open the HTML file (called "index.html") provided in a web browser that supports HTML5 canvas.
 
-### Event Handling:
-The keyboard input for moving the paddle and restarting the game is handled by the game's event listeners.
+- The game will start automatically, and you can control the snake's movement using the arrow keys on your keyboard.
 
-### Animation and Frame Rendering:
-The'requestAnimationFrame' method is used to make animation and frame rendering run smoothly in the game.
+- Guide the snake to eat the food that appears on the board to grow longer and earn points.
 
-## How to Run the Project:
-Follow these steps to run the Breakout Game:
+- Be careful not to let the snake collide with the walls or its own body. If a collision occurs, the game will end.
 
-- Open the HTML file (called "index.html") that was given to you in a web browser that supports HTML5 painting.
+- Your score will be displayed during the game.
 
-- The game will start on its own, and the player can use the left and right button keys to move the paddle.
+Enjoy playing the Snake Game and aim for a high score!
 
-- The goal is to get rid of all the bricks on the screen by moving the ball away from them with the paddle.
-
-- The 'R' key can be used to start the game over.
-
-## Attribution:
-The logic of the code and the first guide for making a Breakout game came from MDN (Mozilla Developer Network). The original lesson can be found at [the Mozilla documentation.](https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript) But for this project, the game had to be rewritten from start, including changes to the logic, structure, and design. This was done to make sure the game was original and to avoid plagiarism.
